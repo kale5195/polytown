@@ -23,12 +23,19 @@ npm install -g polytown
 ## Setup
 
 ```bash
+# Interactive (humans)
 polytown setup
+
+# Non-interactive (agents / scripts)
+polytown setup -y                   # generate new wallet + deploy + approve
+polytown setup -y --key 0xYourKey   # import existing key + deploy + approve
 ```
 
-Interactive wizard that walks you through wallet creation/import, Safe deployment, token approvals, and balance verification. Configuration is saved to `~/.polytown/.env`.
+The setup wizard handles: wallet creation/import → Gnosis Safe deployment → token approvals → balance check. All on-chain operations are gas-free via relayer.
 
-You can also override settings with a local `.env` file in your working directory, or via environment variables directly.
+Configuration is saved to `~/.polytown/.env`. You can override with a local `.env` in your working directory or via environment variables.
+
+For agent integration, see [`skill.md`](./skill.md).
 
 ### Development
 
@@ -103,16 +110,4 @@ polytown wallet withdraw 100 0x1234...
 
 ### For AI Agents
 
-```bash
-# Pipe market data to your agent
-polytown markets search "election" | your-agent-script
-
-# Resolve URL → get token IDs → check price → place order
-polytown resolve https://polymarket.com/event/<slug>/<market-slug>
-polytown clob price <token_id>
-polytown clob create-order <token_id> --price 0.45 --size 50 --side BUY
-
-# Call from any runtime
-import { execSync } from "child_process";
-const result = execSync("polytown markets search bitcoin").toString();
-```
+See [`SKILL.md`](./SKILL.md) for the full agent skill reference.

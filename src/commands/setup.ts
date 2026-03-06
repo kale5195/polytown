@@ -70,7 +70,10 @@ function updateEnvFile(vars: Record<string, string>) {
 
 export const setupCommand = new Command("setup")
   .description("Interactive setup wizard for Polymarket trading")
-  .action(async () => {
+  .option("-y, --yes", "Skip all confirmations (auto-approve everything)")
+  .option("--key <private_key>", "Provide private key non-interactively")
+  .action(async (opts) => {
+    const autoYes = opts.yes ?? false;
     console.log(bold("\nPolymarket CLI Setup\n"));
 
     // Step 1: Wallet
@@ -85,6 +88,23 @@ export const setupCommand = new Command("setup")
       step(1, 4, "Wallet");
       console.log(`  ${green("Found existing key in environment")}`);
       console.log(`  EOA: ${cyan(eoaAddress)}`);
+    } else if (opts.key) {
+      step(1, 4, "Wallet");
+      privateKey = resolvePrivateKey(opts.key);
+      const account = privateKeyToAccount(privateKey);
+      eoaAddress = account.address;
+      updateEnvFile({ POLYMARKET_PRIVATE_KEY: privateKey });
+      console.log(`  EOA: ${cyan(eoaAddress)}`);
+      console.log(`  ${green("Saved to ~/.polytown/.env")}`);
+    } else if (autoYes) {
+      step(1, 4, "Wallet");
+      const wallet = createRandomWallet();
+      privateKey = wallet.privateKey as `0x${string}`;
+      eoaAddress = wallet.address;
+      updateEnvFile({ POLYMARKET_PRIVATE_KEY: privateKey });
+      console.log(`  EOA: ${cyan(eoaAddress)}`);
+      console.log(`  Private Key: ${yellow(wallet.privateKey)}`);
+      console.log(`  ${green("Saved to ~/.polytown/.env")}`);
     } else {
       step(1, 4, "Wallet");
 
@@ -132,7 +152,7 @@ export const setupCommand = new Command("setup")
     } else {
       console.log(`  Status: ${yellow("not deployed")}`);
 
-      const doDeploy = await confirm({
+      const doDeploy = autoYes || await confirm({
         message: "Deploy your Gnosis Safe now? (gas-free via relayer)",
         default: true,
       });
@@ -195,7 +215,7 @@ export const setupCommand = new Command("setup")
     console.log(`  CTF    -> Neg Risk Exchange:   ${tag(ctfNeg as boolean)}`);
 
     if (!allApproved) {
-      const doApprove = await confirm({
+      const doApprove = autoYes || await confirm({
         message: "Set all approvals now? (gas-free via relayer)",
         default: true,
       });
