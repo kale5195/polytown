@@ -14,8 +14,8 @@ import {
   ERC1155_ABI,
 } from "../lib/contracts.js";
 import { deploySafe, buildApproveCalldata, relayMultiSend, RelayerClient } from "../lib/relayer.js";
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { resolve } from "path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { CONFIG_DIR, CONFIG_ENV_PATH } from "../lib/config.js";
 
 const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
 const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`;
@@ -50,10 +50,10 @@ async function pollTransaction(relayer: RelayerClient, txId: string): Promise<bo
 }
 
 function updateEnvFile(vars: Record<string, string>) {
-  const envPath = resolve(process.cwd(), ".env");
+  mkdirSync(CONFIG_DIR, { recursive: true });
   let content = "";
-  if (existsSync(envPath)) {
-    content = readFileSync(envPath, "utf-8");
+  if (existsSync(CONFIG_ENV_PATH)) {
+    content = readFileSync(CONFIG_ENV_PATH, "utf-8");
   }
 
   for (const [key, value] of Object.entries(vars)) {
@@ -65,7 +65,7 @@ function updateEnvFile(vars: Record<string, string>) {
     }
   }
 
-  writeFileSync(envPath, content);
+  writeFileSync(CONFIG_ENV_PATH, content, { mode: 0o600 });
 }
 
 export const setupCommand = new Command("setup")
@@ -106,7 +106,7 @@ export const setupCommand = new Command("setup")
         eoaAddress = account.address;
         updateEnvFile({ POLYMARKET_PRIVATE_KEY: privateKey });
         console.log(`  EOA: ${cyan(eoaAddress)}`);
-        console.log(`  ${green("Saved to .env")}`);
+        console.log(`  ${green("Saved to ~/.polytown/.env")}`);
       } else {
         const wallet = createRandomWallet();
         privateKey = wallet.privateKey as `0x${string}`;
@@ -114,7 +114,7 @@ export const setupCommand = new Command("setup")
         updateEnvFile({ POLYMARKET_PRIVATE_KEY: privateKey });
         console.log(`  EOA: ${cyan(eoaAddress)}`);
         console.log(`  Private Key: ${yellow(wallet.privateKey)}`);
-        console.log(`  ${green("Saved to .env")}`);
+        console.log(`  ${green("Saved to ~/.polytown/.env")}`);
       }
     }
 

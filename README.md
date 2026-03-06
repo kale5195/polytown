@@ -17,8 +17,7 @@ Fast, lightweight, and scriptable — built with [Bun](https://bun.sh) and TypeS
 ## Install
 
 ```bash
-bun install
-bun link
+npm install -g polytown
 ```
 
 ## Setup
@@ -27,12 +26,17 @@ bun link
 polytown setup
 ```
 
-Interactive wizard that walks you through wallet creation/import, Safe deployment, token approvals, and balance verification.
+Interactive wizard that walks you through wallet creation/import, Safe deployment, token approvals, and balance verification. Configuration is saved to `~/.polytown/.env`.
 
-Or copy `.env.example` to `.env` and fill in your values manually:
+You can also override settings with a local `.env` file in your working directory, or via environment variables directly.
+
+### Development
 
 ```bash
-cp .env.example .env
+git clone https://github.com/kale5195/polymarket-cli.git
+cd polymarket-cli
+bun install
+bun run dev
 ```
 
 ## Usage
@@ -109,5 +113,6 @@ polytown clob price <token_id>
 polytown clob create-order <token_id> --price 0.45 --size 50 --side BUY
 
 # Call from any runtime
-const result = Bun.spawnSync(["polytown", "markets", "search", "bitcoin"]);
+import { execSync } from "child_process";
+const result = execSync("polytown markets search bitcoin").toString();
 ```

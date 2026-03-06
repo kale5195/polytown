@@ -3,11 +3,17 @@
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "polytown": "./src/index.ts"
+    "polytown": "./dist/index.js"
   },
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "bun src/index.ts",
     "dev": "bun --watch src/index.ts",
+    "build": "tsup",
+    "prepublishOnly": "npm run build",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
@@ -19,6 +25,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   }
 }

@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 import { program } from "commander";
 import { statusCommand } from "./commands/status.js";
 import { marketsCommand } from "./commands/markets.js";

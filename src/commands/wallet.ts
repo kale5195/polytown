@@ -117,6 +117,6 @@ walletCommand
   .description("Reset wallet (clear env reminder)")
   .action(async () => {
     out({
-      message: "To reset, remove POLYMARKET_PRIVATE_KEY from your .env file",
+      message: "To reset, remove POLYMARKET_PRIVATE_KEY from ~/.polytown/.env",
     });
   });
