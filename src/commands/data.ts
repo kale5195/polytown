@@ -75,12 +75,17 @@ dataCommand
   .description("Get trade history (defaults to your wallet)")
   .option("--private-key <key>", "Private key")
 
+  .option("--market <condition_id>", "Filter by market condition ID")
   .option("--limit <n>", "Limit results", parseInt)
   .option("--offset <n>", "Offset results", parseInt)
   .action(async (address, opts) => {
     const addr = resolveAddr(address, opts);
     const client = new DataClient();
-    const result = await client.getTrades(addr, opts);
+    const result = await client.getTrades(addr, {
+      limit: opts.limit,
+      offset: opts.offset,
+      market: opts.market,
+    });
     out(result);
   });
 
@@ -156,12 +161,3 @@ dataCommand
     out(result);
   });
 
-dataCommand
-  .command("builder-volume")
-  .description("Get builder volume")
-  .option("--period <period>", "Time period")
-  .action(async (opts) => {
-    const client = new DataClient();
-    const result = await client.getBuilderVolume(opts);
-    out(result);
-  });

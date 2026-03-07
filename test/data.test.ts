@@ -57,7 +57,7 @@ describe("DataClient URL building", () => {
 
   test("getHolders", async () => {
     await client.getHolders("cond123", { limit: 50 });
-    expect(fetchCalls[0]).toBe(`${MOCK_BASE}/holders?conditionId=cond123&limit=50`);
+    expect(fetchCalls[0]).toBe(`${MOCK_BASE}/holders?market=cond123&limit=50`);
   });
 
   test("getOpenInterest", async () => {
@@ -73,21 +73,21 @@ describe("DataClient URL building", () => {
   test("getLeaderboard maps orderBy to order_by", async () => {
     await client.getLeaderboard({ period: "weekly", orderBy: "profit" });
     expect(fetchCalls[0]).toBe(
-      `${MOCK_BASE}/leaderboard?period=weekly&order_by=profit`
+      `${MOCK_BASE}/v1/leaderboard?period=weekly&order_by=profit`
     );
   });
 
   test("getBuilderLeaderboard", async () => {
     await client.getBuilderLeaderboard({ period: "daily", limit: 10 });
     expect(fetchCalls[0]).toBe(
-      `${MOCK_BASE}/leaderboard/builders?period=daily&limit=10`
+      `${MOCK_BASE}/v1/leaderboard?builders=true&period=daily&limit=10`
     );
   });
 
-  test("getBuilderVolume", async () => {
-    await client.getBuilderVolume({ period: "monthly" });
+  test("getTrades with market filter", async () => {
+    await client.getTrades("0xabc", { market: "0xcond123" });
     expect(fetchCalls[0]).toBe(
-      `${MOCK_BASE}/leaderboard/builders/volume?period=monthly`
+      `${MOCK_BASE}/trades?user=0xabc&market=0xcond123`
     );
   });
 });

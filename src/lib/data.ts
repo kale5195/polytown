@@ -60,7 +60,7 @@ export class DataClient {
 
   async getTrades(
     address: string,
-    params?: { limit?: number; offset?: number }
+    params?: { limit?: number; offset?: number; market?: string }
   ) {
     return fetchJson(
       buildUrl(this.baseUrl, "/trades", { user: address, ...params })
@@ -79,7 +79,7 @@ export class DataClient {
   // Market data
   async getHolders(conditionId: string, params?: { limit?: number }) {
     return fetchJson(
-      buildUrl(this.baseUrl, "/holders", { conditionId, ...params })
+      buildUrl(this.baseUrl, "/holders", { market: conditionId, ...params })
     );
   }
 
@@ -101,7 +101,7 @@ export class DataClient {
     offset?: number;
   }) {
     return fetchJson(
-      buildUrl(this.baseUrl, "/leaderboard", {
+      buildUrl(this.baseUrl, "/v1/leaderboard", {
         period: params?.period,
         order_by: params?.orderBy,
         limit: params?.limit,
@@ -116,21 +116,10 @@ export class DataClient {
     offset?: number;
   }) {
     return fetchJson(
-      buildUrl(
-        this.baseUrl,
-        "/leaderboard/builders",
-        params as QueryParams
-      )
-    );
-  }
-
-  async getBuilderVolume(params?: { period?: string }) {
-    return fetchJson(
-      buildUrl(
-        this.baseUrl,
-        "/leaderboard/builders/volume",
-        params as QueryParams
-      )
+      buildUrl(this.baseUrl, "/v1/leaderboard", {
+        builders: true,
+        ...params,
+      } as QueryParams)
     );
   }
 }
