@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { GammaClient } from "../lib/gamma.js";
 
 export const marketsCommand = new Command("markets").description(
-  "Markets commands"
+  "Markets commands",
 );
 
 marketsCommand
@@ -21,6 +21,7 @@ marketsCommand
   .option("--clob-token-ids <ids>", "Filter by CLOB token IDs")
   .option("--condition-ids <ids>", "Filter by condition IDs")
   .option("--tag-id <id>", "Filter by tag ID", parseInt)
+  .option("--exclude-tag-id <ids>", "Exclude tag IDs (comma-separated)")
   .option("--related-tags", "Include related tags")
   .option("--include-tag", "Include tag data")
   .option("--liquidity-min <n>", "Min liquidity", parseFloat)
@@ -52,6 +53,7 @@ marketsCommand
     if (opts.clobTokenIds) params.clob_token_ids = opts.clobTokenIds;
     if (opts.conditionIds) params.condition_ids = opts.conditionIds;
     if (opts.tagId) params.tag_id = opts.tagId;
+    if (opts.excludeTagId) params.exclude_tag_id = opts.excludeTagId;
     if (opts.relatedTags) params.related_tags = true;
     if (opts.includeTag) params.include_tag = true;
     if (opts.liquidityMin) params.liquidity_num_min = opts.liquidityMin;
@@ -62,13 +64,15 @@ marketsCommand
     if (opts.startDateMax) params.start_date_max = opts.startDateMax;
     if (opts.endDateMin) params.end_date_min = opts.endDateMin;
     if (opts.endDateMax) params.end_date_max = opts.endDateMax;
-    if (opts.umaResolutionStatus) params.uma_resolution_status = opts.umaResolutionStatus;
+    if (opts.umaResolutionStatus)
+      params.uma_resolution_status = opts.umaResolutionStatus;
     if (opts.gameId) params.game_id = opts.gameId;
-    if (opts.sportsMarketTypes) params.sports_market_types = opts.sportsMarketTypes;
+    if (opts.sportsMarketTypes)
+      params.sports_market_types = opts.sportsMarketTypes;
     if (opts.rewardsMinSize) params.rewards_min_size = opts.rewardsMinSize;
     if (opts.questionIds) params.question_ids = opts.questionIds;
     const result = await gamma.getMarkets(params);
-    
+
     // Default: simplified format. Use --full for complete data
     if (opts.full) {
       console.log(JSON.stringify(result, null, 2));
@@ -82,11 +86,13 @@ marketsCommand
         description: m.description,
         outcomes: m.outcomes,
         outcomePrices: m.outcomePrices,
+        active: m.active,
         closed: m.closed,
         endDate: m.endDate,
         volume: m.volumeNum || m.volume,
         volume24hr: m.volume24hr,
-        image: m.image,
+        lastTradePrice: m.lastTradePrice,
+        oneWeekPriceChange: m.oneWeekPriceChange,
       }));
       console.log(JSON.stringify(simplified, null, 2));
     }
@@ -110,4 +116,3 @@ marketsCommand
     const result = await gamma.searchMarkets(query, opts);
     console.log(JSON.stringify(result, null, 2));
   });
-
