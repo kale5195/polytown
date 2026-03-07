@@ -8,6 +8,7 @@ export const marketsCommand = new Command("markets").description(
 marketsCommand
   .command("list")
   .description("List markets")
+  .option("--full", "Output full format (default: simplified)")
   .option("--active", "Only active markets")
   .option("--closed", "Only closed markets")
   .option("--cyom", "Filter by create-your-own-market")
@@ -67,7 +68,28 @@ marketsCommand
     if (opts.rewardsMinSize) params.rewards_min_size = opts.rewardsMinSize;
     if (opts.questionIds) params.question_ids = opts.questionIds;
     const result = await gamma.getMarkets(params);
-    console.log(JSON.stringify(result, null, 2));
+    
+    // Default: simplified format. Use --full for complete data
+    if (opts.full) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      const simplified = result.map((m: any) => ({
+        id: m.id,
+        question: m.question,
+        slug: m.slug,
+        conditionId: m.conditionId,
+        clobTokenIds: m.clobTokenIds,
+        description: m.description,
+        outcomes: m.outcomes,
+        outcomePrices: m.outcomePrices,
+        closed: m.closed,
+        endDate: m.endDate,
+        volume: m.volumeNum || m.volume,
+        volume24hr: m.volume24hr,
+        image: m.image,
+      }));
+      console.log(JSON.stringify(simplified, null, 2));
+    }
   });
 
 marketsCommand

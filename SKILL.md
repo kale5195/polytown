@@ -26,6 +26,7 @@ polytown setup -y --key 0xYourPrivateKey
 ```
 
 **What `setup -y` does automatically:**
+
 1. Creates a new wallet (or imports via `--key`) and saves to `~/.polytown/.env`
 2. Deploys a Gnosis Safe via the relayer (gas-free)
 3. Sets all token approvals (USDC.e + CTF for both exchanges, gas-free)
@@ -198,58 +199,102 @@ polytown ctf redeem-neg-risk --condition <id> --amounts 1000000,0
 
 ## Command Reference
 
-| Command               | Description                 | Auth Required |
-| --------------------- | --------------------------- | :-----------: |
-| `setup`               | Interactive setup wizard    |      No       |
-| `status`              | API health checks           |      No       |
-| `resolve <url>`       | Resolve URL/username to IDs |      No       |
-| `markets list`        | List/filter markets         |      No       |
-| `markets get <id>`    | Get market details          |      No       |
-| `markets search <q>`  | Search markets              |      No       |
-| `events`              | Browse events               |      No       |
-| `movers`              | Biggest price movers        |      No       |
-| `tags`                | Browse market tags          |      No       |
-| `series`              | Browse event series         |      No       |
-| `sports`              | Sports markets              |      No       |
-| `comments <event_id>` | Event comments              |      No       |
-| `profile [address]`   | User profile                |      No       |
-| `clob price`          | Token price                 |      No       |
-| `clob midpoint`       | Midpoint price              |      No       |
-| `clob spread`         | Bid-ask spread              |      No       |
-| `clob book`           | Order book                  |      No       |
-| `clob last-trade`     | Last trade price            |      No       |
-| `clob price-history`  | Historical prices           |      No       |
-| `clob market`         | CLOB market info            |      No       |
-| `clob tick-size`      | Tick size                   |      No       |
-| `clob create-order`   | Place limit order           |      Yes      |
-| `clob market-order`   | Place market order          |      Yes      |
-| `clob post-orders`    | Batch orders                |      Yes      |
-| `clob orders`         | List open orders            |      Yes      |
-| `clob order <id>`     | Order details               |      Yes      |
-| `clob cancel`         | Cancel order                |      Yes      |
-| `clob cancel-all`     | Cancel all orders           |      Yes      |
-| `clob trades`         | Trade history               |      Yes      |
-| `clob balance`        | CLOB balance                |      Yes      |
-| `clob rewards`        | Daily rewards               |      Yes      |
-| `clob earnings`       | Daily earnings              |      Yes      |
-| `clob api-keys`       | Manage API keys             |      Yes      |
-| `wallet show`         | Wallet info                 |      Yes      |
-| `wallet balance`      | USDC.e balance              |      Yes      |
-| `wallet withdraw`     | Withdraw USDC.e             |      Yes      |
-| `data positions`      | Open positions              |      Yes      |
-| `data trades`         | Trade history               |      Yes      |
-| `data value`          | Portfolio value             |      Yes      |
-| `data leaderboard`    | Leaderboard                 |      No       |
-| `ctf split`           | Split to tokens             |      Yes      |
-| `ctf merge`           | Merge tokens                |      Yes      |
-| `ctf redeem`          | Redeem winnings             |      Yes      |
-| `approve`             | Token approvals             |      Yes      |
+| Command               | Description                 | Auth Required | Notes                    |
+| --------------------- | --------------------------- | :-----------: | ------------------------ |
+| `setup`               | Interactive setup wizard    |      No       |                          |
+| `status`              | API health checks           |      No       |                          |
+| `resolve <url>`       | Resolve URL/username to IDs |      No       |                          |
+| `markets list`        | List/filter markets         |      No       | Use `--full` for all fields |
+| `markets get <id>`    | Get market details          |      No       |                          |
+| `markets search <q>`  | Search markets              |      No       |                          |
+| `events list`         | Browse events               |      No       | Use `--full` for all fields |
+| `events get <id>`     | Get event details           |      No       |                          |
+| `movers`              | Biggest price movers        |      No       |                          |
+| `tags`                | Browse market tags          |      No       |                          |
+| `series`              | Browse event series         |      No       |                          |
+| `sports`              | Sports markets              |      No       |                          |
+| `comments <event_id>` | Event comments              |      No       |                          |
+| `profile [address]`   | User profile                |      No       |                          |
+| `clob price`          | Token price                 |      No       |                          |
+| `clob midpoint`       | Midpoint price              |      No       |                          |
+| `clob spread`         | Bid-ask spread              |      No       |                          |
+| `clob book`           | Order book                  |      No       |                          |
+| `clob last-trade`     | Last trade price            |      No       |                          |
+| `clob price-history`  | Historical prices           |      No       |                          |
+| `clob market`         | CLOB market info            |      No       |                          |
+| `clob tick-size`      | Tick size                   |      No       |                          |
+| `clob create-order`   | Place limit order           |      Yes      |                          |
+| `clob market-order`   | Place market order          |      Yes      |                          |
+| `clob post-orders`    | Batch orders                |      Yes      |                          |
+| `clob orders`         | List open orders            |      Yes      |                          |
+| `clob order <id>`     | Order details               |      Yes      |                          |
+| `clob cancel`         | Cancel order                |      Yes      |                          |
+| `clob cancel-all`     | Cancel all orders           |      Yes      |                          |
+| `clob trades`         | Trade history               |      Yes      |                          |
+| `clob balance`        | CLOB balance                |      Yes      |                          |
+| `clob rewards`        | Daily rewards               |      Yes      |                          |
+| `clob earnings`       | Daily earnings              |      Yes      |                          |
+| `clob api-keys`       | Manage API keys             |      Yes      |                          |
+| `wallet show`         | Wallet info                 |      Yes      |                          |
+| `wallet balance`      | USDC.e balance              |      Yes      |                          |
+| `wallet withdraw`     | Withdraw USDC.e             |      Yes      |                          |
+| `data positions`      | Open positions              |      Yes      |                          |
+| `data trades`         | Trade history               |      Yes      |                          |
+| `data market-trades`  | All trades for a market     |      No       | **New:** No user filter  |
+| `data value`          | Portfolio value             |      Yes      |                          |
+| `data leaderboard`    | Leaderboard                 |      No       |                          |
+| `ctf split`           | Split to tokens             |      Yes      |                          |
+| `ctf merge`           | Merge tokens                |      Yes      |                          |
+| `ctf redeem`          | Redeem winnings             |      Yes      |                          |
+| `approve`             | Token approvals             |      Yes      |                          |
 
 ## Output Format
 
 All commands output JSON to stdout. Errors go to stderr. Exit code 0 on success, 1 on failure.
 
-**Important:** Some commands (e.g. `markets search`, `markets list`, `events list`) can return very large JSON that may be truncated when piped directly. Always use `--limit` when available, or save to a file first:
+### Simplified vs Full Output
+
+**By default**, `markets list` and `events list` return simplified JSON with only essential fields (13 fields for markets, 8 fields for events). This reduces data size by ~85% and prevents JSON parsing issues.
+
+**Simplified market fields** (default):
+- `id`, `question`, `slug`, `conditionId`, `clobTokenIds`
+- `description`, `outcomes`, `outcomePrices`
+- `closed`, `endDate`, `volume`, `volume24hr`, `image`
+
+**Simplified event fields** (default):
+- `id`, `title`, `slug`, `description`
+- `closed`, `endDate`, `volume`, `markets`
+
+Use `--full` to get complete data (90+ fields):
+
+```bash
+# Default: simplified output (recommended)
+polytown markets list --active --limit 10
+
+# Full output: all fields
+polytown markets list --active --limit 10 --full
+
+# Events also support --full
+polytown events list --closed --limit 5 --full
+```
+
+### New Commands
+
+**Query all trades for a market** (no user filter):
+
+```bash
+# Get all trades for a specific market
+polytown data market-trades --market <condition_id> --limit 1000
+
+# With pagination
+polytown data market-trades --market <condition_id> --limit 1000 --offset 1000
+```
+
+This is useful for analyzing market activity, finding insider traders, or tracking large trades.
+
+### Usage Tips
+
+**Important:** Some commands can return very large JSON. Always use `--limit` when available, or save to a file first:
 
 ```bash
 # Always use --limit with search to avoid huge output

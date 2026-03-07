@@ -67,6 +67,16 @@ export class DataClient {
     );
   }
 
+  // Get all trades for a market (no user filter)
+  async getMarketTrades(params?: {
+    limit?: number;
+    offset?: number;
+    market?: string;
+    slug?: string;
+  }) {
+    return fetchJson(buildUrl(this.baseUrl, "/trades", params));
+  }
+
   async getActivity(
     address: string,
     params?: { limit?: number; offset?: number }

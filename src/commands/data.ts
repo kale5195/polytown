@@ -90,6 +90,24 @@ dataCommand
   });
 
 dataCommand
+  .command("market-trades")
+  .description("Get all trades for a market (no user filter)")
+  .option("--market <condition_id>", "Market condition ID")
+  .option("--slug <slug>", "Market slug")
+  .option("--limit <n>", "Limit results", parseInt)
+  .option("--offset <n>", "Offset results", parseInt)
+  .action(async (opts) => {
+    const client = new DataClient();
+    const result = await client.getMarketTrades({
+      limit: opts.limit,
+      offset: opts.offset,
+      market: opts.market,
+      slug: opts.slug,
+    });
+    out(result);
+  });
+
+dataCommand
   .command("activity [address]")
   .description("Get activity history (defaults to your wallet)")
   .option("--private-key <key>", "Private key")

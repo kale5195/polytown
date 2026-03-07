@@ -8,6 +8,7 @@ export const eventsCommand = new Command("events").description(
 eventsCommand
   .command("list")
   .description("List events")
+  .option("--full", "Output full format (default: simplified)")
   .option("--active", "Only active events")
   .option("--closed", "Only closed events")
   .option("--archived", "Include archived events")
@@ -61,7 +62,23 @@ eventsCommand
     if (opts.endDateMin) params.end_date_min = opts.endDateMin;
     if (opts.endDateMax) params.end_date_max = opts.endDateMax;
     const result = await gamma.getEvents(params);
-    console.log(JSON.stringify(result, null, 2));
+    
+    // Default: simplified format. Use --full for complete data
+    if (opts.full) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      const simplified = result.map((e: any) => ({
+        id: e.id,
+        title: e.title,
+        slug: e.slug,
+        description: e.description,
+        closed: e.closed,
+        endDate: e.endDate,
+        volume: e.volume,
+        markets: e.markets?.length || 0,
+      }));
+      console.log(JSON.stringify(simplified, null, 2));
+    }
   });
 
 eventsCommand
