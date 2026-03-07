@@ -55,6 +55,8 @@ polytown markets list --active --order volume24hr --limit 10
 
 # Get biggest price movers
 polytown movers --limit 10
+# Filter movers by category
+polytown movers --category politics
 
 # Resolve any Polymarket URL to structured IDs
 polytown resolve https://polymarket.com/event/<slug>
@@ -245,9 +247,14 @@ polytown ctf redeem-neg-risk --condition <id> --amounts 1000000,0
 
 All commands output JSON to stdout. Errors go to stderr. Exit code 0 on success, 1 on failure.
 
+**Important:** Some commands (e.g. `markets search`, `markets list`, `events list`) can return very large JSON that may be truncated when piped directly. Always use `--limit` when available, or save to a file first:
+
 ```bash
-# Parse output with jq
-polytown markets search "bitcoin" | jq '.[0].question'
+# Always use --limit with search to avoid huge output
+polytown markets search "bitcoin" --limit 5 | jq '.[0].question'
+
+# For large outputs, save to file first then parse
+polytown movers > /tmp/movers.json && jq '.[0:10]' /tmp/movers.json
 
 # Use in scripts
 TOKEN_ID=$(polytown resolve https://polymarket.com/event/slug/market-slug | jq -r '.tokenIds[0]')

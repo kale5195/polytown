@@ -18,6 +18,7 @@ export const moversCommand = new Command("movers")
     "--category <category>",
     `Filter by category (${CATEGORIES.join(", ")})`,
   )
+  .option("--limit <n>", "Limit number of results", parseInt)
   .action(async (opts) => {
     const params: Record<string, string> = {};
     if (opts.category && opts.category !== "all") {
@@ -32,5 +33,9 @@ export const moversCommand = new Command("movers")
       throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
     const data = await res.json();
-    console.log(JSON.stringify(data.markets || [], null, 2));
+    let markets = data.markets || [];
+    if (opts.limit) {
+      markets = markets.slice(0, opts.limit);
+    }
+    console.log(JSON.stringify(markets, null, 2));
   });
