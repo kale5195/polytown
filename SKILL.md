@@ -153,6 +153,8 @@ polytown data value
 
 # Trade history
 polytown data trades
+# Trade history for a specific market (including settled markets)
+polytown data trades --market <condition_id>
 
 # Activity feed
 polytown data activity
