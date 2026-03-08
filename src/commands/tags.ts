@@ -9,10 +9,27 @@ tagsCommand
   .option("--limit <n>", "Limit results", parseInt)
   .option("--offset <n>", "Offset results", parseInt)
   .option("--ascending", "Sort ascending")
+  .option("--search <query>", "Search tags by label or slug")
   .action(async (opts) => {
     const gamma = new GammaClient();
-    const result = await gamma.getTags(opts);
-    console.log(JSON.stringify(result, null, 2));
+    if (opts.search) {
+      const query = opts.search.toLowerCase();
+      const all: any[] = [];
+      for (let offset = 0; ; offset += 300) {
+        const batch: any[] = await gamma.getTags({ limit: 300, offset });
+        all.push(...batch);
+        if (batch.length < 300) break;
+      }
+      const matched = all.filter(
+        (t: any) =>
+          t.label?.toLowerCase().includes(query) ||
+          t.slug?.toLowerCase().includes(query)
+      );
+      console.log(JSON.stringify(matched, null, 2));
+    } else {
+      const result = await gamma.getTags(opts);
+      console.log(JSON.stringify(result, null, 2));
+    }
   });
 
 tagsCommand

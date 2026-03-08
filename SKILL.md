@@ -204,13 +204,16 @@ polytown ctf redeem-neg-risk --condition <id> --amounts 1000000,0
 | `setup`               | Interactive setup wizard    |      No       |                          |
 | `status`              | API health checks           |      No       |                          |
 | `resolve <url>`       | Resolve URL/username to IDs |      No       |                          |
-| `markets list`        | List/filter markets         |      No       | Use `--full` for all fields |
+| `markets list`        | List/filter markets         |      No       | `--full`, `--include-tag` |
 | `markets get <id>`    | Get market details          |      No       |                          |
 | `markets search <q>`  | Search markets              |      No       |                          |
-| `events list`         | Browse events               |      No       | Use `--full` for all fields |
+| `events list`         | Browse events               |      No       | `--full`, `--include-tag` |
 | `events get <id>`     | Get event details           |      No       |                          |
 | `movers`              | Biggest price movers        |      No       |                          |
-| `tags`                | Browse market tags          |      No       |                          |
+| `tags list`           | List/search tags            |      No       | `--search` to filter     |
+| `tags get <id>`       | Get tag by ID or slug       |      No       |                          |
+| `tags related <id>`   | Related items for tag       |      No       |                          |
+| `tags related-tags`   | Related tags                |      No       |                          |
 | `series`              | Browse event series         |      No       |                          |
 | `sports`              | Sports markets              |      No       |                          |
 | `comments <event_id>` | Event comments              |      No       |                          |
@@ -259,11 +262,13 @@ All commands output JSON to stdout. Errors go to stderr. Exit code 0 on success,
 **Simplified market fields** (default):
 - `id`, `question`, `slug`, `conditionId`, `clobTokenIds`
 - `description`, `outcomes`, `outcomePrices`
-- `closed`, `endDate`, `volume`, `volume24hr`, `image`
+- `active`, `closed`, `endDate`, `volume`, `volume24hr`
+- `lastTradePrice`, `oneWeekPriceChange`
 
 **Simplified event fields** (default):
 - `id`, `title`, `slug`, `description`
-- `closed`, `endDate`, `volume`, `markets`
+- `closed`, `endDate`, `volume`
+- `markets` (array of simplified market objects with `id`, `question`, `slug`, `conditionId`, `clobTokenIds`, `outcomes`, `outcomePrices`, `active`, `closed`, `endDate`, `volume`, `volume24hr`, `liquidity`, `lastTradePrice`, `oneWeekPriceChange`)
 
 Use `--full` to get complete data (90+ fields):
 
@@ -274,8 +279,15 @@ polytown markets list --active --limit 10
 # Full output: all fields
 polytown markets list --active --limit 10 --full
 
+# Include tag data in simplified output
+polytown markets list --active --limit 10 --include-tag
+polytown events list --active --limit 10 --include-tag
+
 # Events also support --full
 polytown events list --closed --limit 5 --full
+
+# Search tags by label or slug
+polytown tags list --search "politics"
 ```
 
 ### New Commands

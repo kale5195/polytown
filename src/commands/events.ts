@@ -24,6 +24,7 @@ eventsCommand
   .option("--exclude-tag-id <ids>", "Exclude tag IDs (comma-separated)")
   .option("--slug <slugs>", "Filter by slug(s)")
   .option("--related-tags", "Include related tags")
+  .option("--include-tag", "Include tag data")
   .option("--recurrence <pattern>", "Filter by recurrence pattern")
   .option("--liquidity-min <n>", "Min liquidity", parseFloat)
   .option("--liquidity-max <n>", "Max liquidity", parseFloat)
@@ -52,6 +53,7 @@ eventsCommand
     if (opts.excludeTagId) params.exclude_tag_id = opts.excludeTagId.split(",");
     if (opts.slug) params.slug = opts.slug;
     if (opts.relatedTags) params.related_tags = true;
+    if (opts.includeTag) params.include_tag = true;
     if (opts.recurrence) params.recurrence = opts.recurrence;
     if (opts.liquidityMin) params.liquidity_min = opts.liquidityMin;
     if (opts.liquidityMax) params.liquidity_max = opts.liquidityMax;
@@ -62,7 +64,7 @@ eventsCommand
     if (opts.endDateMin) params.end_date_min = opts.endDateMin;
     if (opts.endDateMax) params.end_date_max = opts.endDateMax;
     const result = await gamma.getEvents(params);
-    
+
     // Default: simplified format. Use --full for complete data
     if (opts.full) {
       console.log(JSON.stringify(result, null, 2));
@@ -75,7 +77,24 @@ eventsCommand
         closed: e.closed,
         endDate: e.endDate,
         volume: e.volume,
-        markets: e.markets?.length || 0,
+        ...(opts.includeTag && e.tags ? { tags: e.tags } : {}),
+        markets: (e.markets || []).map((m: any) => ({
+          id: m.id,
+          question: m.question,
+          slug: m.slug,
+          conditionId: m.conditionId,
+          clobTokenIds: m.clobTokenIds,
+          outcomes: m.outcomes,
+          outcomePrices: m.outcomePrices,
+          active: m.active,
+          closed: m.closed,
+          endDate: m.endDate,
+          volume: m.volumeNum || m.volume,
+          volume24hr: m.volume24hr,
+          liquidity: m.liquidityNum || m.liquidity,
+          lastTradePrice: m.lastTradePrice,
+          oneWeekPriceChange: m.oneWeekPriceChange,
+        })),
       }));
       console.log(JSON.stringify(simplified, null, 2));
     }

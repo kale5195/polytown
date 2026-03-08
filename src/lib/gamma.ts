@@ -101,6 +101,7 @@ export class GammaClient {
     tag_slug?: string;
     tag?: string;
     related_tags?: boolean;
+    include_tag?: boolean;
     include_chat?: boolean;
     include_template?: boolean;
     recurrence?: string;
@@ -130,7 +131,10 @@ export class GammaClient {
   }
 
   async getTag(idOrSlug: string) {
-    return fetchJson(buildUrl(this.baseUrl, `/tags/${idOrSlug}`));
+    if (/^\d+$/.test(idOrSlug)) {
+      return fetchJson(buildUrl(this.baseUrl, `/tags/${idOrSlug}`));
+    }
+    return fetchJson(buildUrl(this.baseUrl, `/tags/slug/${idOrSlug}`));
   }
 
   async getRelated(idOrSlug: string) {
